@@ -76,8 +76,6 @@ def main():
                                         )
             print(dt, path, city, state)
             wr.s3.to_csv(daily_weather_data, path, index=False)
-            break
-        break
 
 
 if __name__ == "__main__":
