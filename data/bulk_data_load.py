@@ -1,11 +1,21 @@
-from app.conf import cities
-import pandas as pd
-from meteostat import Point, Hourly
-import awswrangler as wr
-from datetime import datetime, timedelta
 from typing import Tuple
+from datetime import datetime, timedelta
+import awswrangler as wr
+from meteostat import Point, Hourly
+import pandas as pd
+import sys
+import os
+from pathlib import Path
+
+# get the path to the directory containing the current script
+script_dir = Path(__file__).resolve().parent
+# add the path to the directory containing the module to the Python path
+sys.path.append(str(script_dir.parent))
+
+from app.conf import cities  # noqa: E402
 
 raw_data_bucket = 'raw-city-weather-data-1'
+
 
 def make_s3_weather_path(bucket: str, city: str, state: str, lat: float, lon: float, dt: str) -> str:
     city = city.lower().replace(' ', '-')
@@ -64,4 +74,9 @@ def main():
                                         lon=lon,
                                         dt=dt
                                         )
+            print(dt, path, city, state)
             wr.s3.to_csv(daily_weather_data, path, index=False)
+
+
+if __name__ == "__main__":
+    main()

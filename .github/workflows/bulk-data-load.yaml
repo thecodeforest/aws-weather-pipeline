@@ -19,7 +19,6 @@ jobs:
       uses: actions/setup-python@v2
       with: 
         python-version: 3.9.13
-        token: ${{ secrets.TOKEN_GITHUB }}
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
@@ -28,4 +27,4 @@ jobs:
       run: |
         python data/bulk_data_load.py
     
-    
+
