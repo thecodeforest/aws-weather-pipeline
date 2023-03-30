@@ -8,6 +8,7 @@ from utils.weather import (
 from utils.logger import Logger
 from validation.validate_weather_data import validate_city_weather_data
 from conf import cities
+import boto3  # noqa: F401
 
 
 try:
@@ -42,3 +43,13 @@ def weather_collector(event, context):
             wr.s3.to_csv(daily_weather_data, path, index=False)
         logger.log_info(f"Finished weather collector for {city} {state}")
     logger.log_info("Finished weather collector")
+    # trigger glue job
+    # glue = boto3.client('glue',)
+    # workflow_name = 'my-glue-workflow'
+    # response = glue.start_workflow_run(Name=workflow_name)
+    # workflow_run_id = response['RunId']
+    # print(f'Started workflow run {workflow_run_id}')
+    # return {
+    #     'statusCode': 200,
+    #     'body': f'Started workflow run {workflow_run_id}'
+    # }

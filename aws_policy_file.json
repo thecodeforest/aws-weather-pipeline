@@ -3,7 +3,12 @@
     "Statement": [
         {
             "Effect": "Allow",
-            "Action": "s3:*",
+            "Action": [
+                "s3:*",
+                "lambda:*",
+                "ecr:*",
+                "glue:*"
+            ],
             "Resource": "*"
         }
     ]

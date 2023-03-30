@@ -132,3 +132,5 @@ sandbox.ipynb
 # ignore venv
 weather-pipeline/
 post.md
+.DS_Store
+sandbox.sh
