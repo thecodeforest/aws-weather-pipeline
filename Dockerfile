@@ -22,5 +22,7 @@ ENV PYTHONPATH=${LAMBDA_TASK_ROOT}/app
 # set the environment variables
 ENV OUTPUT_BUCKET="raw-city-weather-data-1"
 
-# specify the lambda handler
+ENV GLUE_WORKFLOW_NAME="daily-weather-workflow"
+
+# specify the entry point for the lambda function
 CMD [ "lambda_handler.weather_collector"]

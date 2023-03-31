@@ -5,6 +5,8 @@ on:
     paths:
       - 'Dockerfile'
       - '.github/workflows/docker-build.yaml'
+      - 'app/**'
+      - 'requirements.txt'
 
 env:
 
