@@ -14,9 +14,11 @@ import boto3  # noqa: F401
 try:
     environment = os.environ["AWS_LAMBDA_FUNCTION_NAME"]
     output_bucket = os.environ["OUTPUT_BUCKET"]
+    glue_workflow_name = os.environ["GLUE_WORKFLOW_NAME"]
 except KeyError:
     environment = "local"
     output_bucket = "raw-city-weather-data-1"
+    glue_workflow_name = None
 
 
 def weather_collector(event, context):
@@ -39,17 +41,16 @@ def weather_collector(event, context):
             raise ValueError
         for dt in city_weather_data["time"].dt.date.unique():
             daily_weather_data = city_weather_data[city_weather_data["time"].dt.date == dt]
+            if environment == "local":
+                print(daily_weather_data.head())
+                return None
             path = make_s3_weather_path(bucket=output_bucket, city=city, state=state, lat=lat, lon=lon, dt=dt)
             wr.s3.to_csv(daily_weather_data, path, index=False)
         logger.log_info(f"Finished weather collector for {city} {state}")
     logger.log_info("Finished weather collector")
-    # trigger glue job
-    # glue = boto3.client('glue',)
-    # workflow_name = 'my-glue-workflow'
-    # response = glue.start_workflow_run(Name=workflow_name)
-    # workflow_run_id = response['RunId']
-    # print(f'Started workflow run {workflow_run_id}')
-    # return {
-    #     'statusCode': 200,
-    #     'body': f'Started workflow run {workflow_run_id}'
-    # }
+    if environment == "prod":
+        glue = boto3.client("glue")
+        response = glue.start_workflow_run(Name=glue_workflow_name)
+        workflow_run_id = response["RunId"]
+        print(f"Started workflow run {workflow_run_id}")
+        return {"statusCode": 200, "body": f"Started workflow run {workflow_run_id}"}
