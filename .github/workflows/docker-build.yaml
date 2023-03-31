@@ -1,0 +1,46 @@
+name: Docker Build
+
+on: 
+  push:
+    paths:
+      - 'Dockerfile'
+      - '.github/workflows/docker-build.yaml'
+
+env:
+
+  AWS_REGION: 'us-west-2'
+  IMAGE_NAME: 'daily-weather-repo'
+  IMAGE_TAG: 'latest'
+  ECR_REGISTRY: 371410071971.dkr.ecr.us-west-2.amazonaws.com 
+  LAMBDA_FUNCTION_NAME: daily-weather-lambda
+
+jobs:
+  docker-build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Configure AWS credentials
+          uses: aws-actions/configure-aws-credentials@v1
+          with:
+            aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+            aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+            aws-region: ${{ env.AWS_REGION }}
+
+      - name: Build and tag Docker image
+        run: |
+          docker build -t $ECR_REGISTRY/$IMAGE_NAME:$IMAGE_TAG .
+          docker tag $ECR_REGISTRY/$IMAGE_NAME:$IMAGE_TAG $ECR_REGISTRY/$IMAGE_NAME:$IMAGE_TAG
+
+      - name: Login to ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Push Docker image to ECR
+        run: |
+          docker push $ECR_REGISTRY/$IMAGE_NAME:$IMAGE_TAG
+
+      - name: Deploy to AWS Lambda
+        run: |
+          aws lambda update-function-code --function-name $LAMBDA_FUNCTION_NAME --image-uri $ECR_REGISTRY/$IMAGE_NAME:$IMAGE_TAG

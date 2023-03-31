@@ -23,4 +23,4 @@ ENV PYTHONPATH=${LAMBDA_TASK_ROOT}/app
 ENV OUTPUT_BUCKET="raw-city-weather-data-1"
 
 # specify the lambda handler
-CMD [ "app.weather_collector"]
+CMD [ "lambda_handler.weather_collector"]
