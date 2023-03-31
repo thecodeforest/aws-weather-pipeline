@@ -36,7 +36,6 @@ def weather_collector(event, context):
         city_weather_data = collect_historical_weather_data(
             lat=lat, lon=lon, city=city, state=state, start=start_dt, end=end_dt
         )
-        
 
     #     # logger.log_info(f"Received {city_weather_data.shape[0]} rows of weather data for {city} {state}")
     #     has_passed, error_cases = validate_city_weather_data(

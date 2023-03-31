@@ -40,6 +40,5 @@ def collect_historical_weather_data(
     data["lon"] = lon
     data["city"] = city
     data["state"] = state
-    data = data[["lat", "lon", "city", "state",
-                 "time", "temp", "rhum", "prcp", "wspd"]]
+    data = data[["lat", "lon", "city", "state", "time", "temp", "rhum", "prcp", "wspd"]]
     return data
