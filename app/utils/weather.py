@@ -4,6 +4,8 @@ import awswrangler as wr
 from meteostat import Point, Hourly
 import pandas as pd
 
+Hourly.max_age = 0
+
 
 def make_s3_weather_path(bucket: str, city: str, state: str, lat: float, lon: float, dt: str) -> str:
     city = city.lower().replace(" ", "-")
@@ -32,7 +34,6 @@ def collect_historical_weather_data(
     lat: float, lon: float, city: str, state: str, start: datetime, end: datetime
 ) -> pd.DataFrame:
     location = Point(lat, lon)
-    print("collecting the hourly weather data below")
     data = Hourly(location, start, end)
     data = data.fetch()
     data = data.reset_index()
@@ -40,5 +41,6 @@ def collect_historical_weather_data(
     data["lon"] = lon
     data["city"] = city
     data["state"] = state
-    data = data[["lat", "lon", "city", "state", "time", "temp", "rhum", "prcp", "wspd"]]
+    data = data[["lat", "lon", "city", "state",
+                 "time", "temp", "rhum", "prcp", "wspd"]]
     return data
