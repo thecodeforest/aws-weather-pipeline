@@ -1,10 +1,11 @@
 from typing import Tuple
 from datetime import datetime, timedelta
 import awswrangler as wr
-from meteostat import Point, Hourly
+from meteostat import Point, Hourly, Stations
 import pandas as pd
 
-Hourly.cache_dir = "/tmp/meteostat"
+Stations.max_age = 0
+
 
 def make_s3_weather_path(bucket: str, city: str, state: str, lat: float, lon: float, dt: str) -> str:
     city = city.lower().replace(" ", "-")
@@ -40,6 +41,5 @@ def collect_historical_weather_data(
     data["lon"] = lon
     data["city"] = city
     data["state"] = state
-    data = data[["lat", "lon", "city", "state",
-                 "time", "temp", "rhum", "prcp", "wspd"]]
+    data = data[["lat", "lon", "city", "state", "time", "temp", "rhum", "prcp", "wspd"]]
     return data
