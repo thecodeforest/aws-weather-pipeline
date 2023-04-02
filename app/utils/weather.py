@@ -5,6 +5,7 @@ from meteostat import Point, Hourly, Stations
 import pandas as pd
 
 Stations.max_age = 0
+Hourly.max_age = 0
 
 
 def make_s3_weather_path(bucket: str, city: str, state: str, lat: float, lon: float, dt: str) -> str:

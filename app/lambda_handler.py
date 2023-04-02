@@ -37,27 +37,22 @@ def weather_collector(event, context):
             lat=lat, lon=lon, city=city, state=state, start=start_dt, end=end_dt
         )
 
-        logger.log_info(
-            f"Received {city_weather_data.shape[0]} rows of weather data for {city} {state}")
-        has_passed, error_cases = validate_city_weather_data(
-            city_weather_data, start_dt, end_dt)
+        logger.log_info(f"Received {city_weather_data.shape[0]} rows of weather data for {city} {state}")
+        has_passed, error_cases = validate_city_weather_data(city_weather_data, start_dt, end_dt)
         if not has_passed:
-            logger.log_exception(ValueError(
-                "Received invalid weather data\n", error_cases))
+            logger.log_exception(ValueError("Received invalid weather data\n", error_cases))
             raise ValueError
         for dt in city_weather_data["time"].dt.date.unique():
             daily_weather_data = city_weather_data[city_weather_data["time"].dt.date == dt]
             if environment == "local":
                 print(daily_weather_data.head())
                 return None
-            path = make_s3_weather_path(
-                bucket=output_bucket, city=city, state=state, lat=lat, lon=lon, dt=dt)
+            path = make_s3_weather_path(bucket=output_bucket, city=city, state=state, lat=lat, lon=lon, dt=dt)
             wr.s3.to_csv(daily_weather_data, path, index=False)
         logger.log_info(f"Finished weather collector for {city} {state}")
     logger.log_info("Finished weather collector")
-    if environment != "local":
-        glue = boto3.client("glue")
-        response = glue.start_workflow_run(Name=glue_workflow_name)
-        workflow_run_id = response["RunId"]
-        print(f"Started workflow run {workflow_run_id}")
-        return {"statusCode": 200, "body": f"Started workflow run {workflow_run_id}"}
+    glue = boto3.client("glue")
+    response = glue.start_workflow_run(Name=glue_workflow_name)
+    workflow_run_id = response["RunId"]
+    print(f"Started workflow run {workflow_run_id}")
+    return {"statusCode": 200, "body": f"Started workflow run {workflow_run_id}"}
