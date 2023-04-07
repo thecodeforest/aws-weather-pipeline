@@ -51,8 +51,9 @@ def weather_collector(event, context):
             wr.s3.to_csv(daily_weather_data, path, index=False)
         logger.log_info(f"Finished weather collector for {city} {state}")
     logger.log_info("Finished weather collector")
-    glue = boto3.client("glue")
-    response = glue.start_workflow_run(Name=glue_workflow_name)
-    workflow_run_id = response["RunId"]
-    print(f"Started workflow run {workflow_run_id}")
-    return {"statusCode": 200, "body": f"Started workflow run {workflow_run_id}"}
+
+    # glue = boto3.client("glue")
+    # response = glue.start_workflow_run(Name=glue_workflow_name)
+    # workflow_run_id = response["RunId"]
+    # print(f"Started workflow run {workflow_run_id}")
+    # return {"statusCode": 200, "body": f"Started workflow run {workflow_run_id}"}
